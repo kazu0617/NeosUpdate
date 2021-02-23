@@ -1,0 +1,27 @@
+2020.12.24.35
+Another small build, I was travelling today to visit family, but here are some small additions and improvements that I didn't want to put on hold.
+
+You can now adjust Brightness and Opacity of the virtual desktop! It'll now also work on hybrid GPU systems using a fallback capture method. It has worse performance, but it should work. I made tweaks so the capture only happens when the virtual desktop is actually active in the dash.
+
+Also Oculus has released hotfix for their SDK which seems to fix Neos running through SteamVR with Oculus Link, resulting in performance penalty.
+
+Hope that everyone's having great Holidays!
+
+New features:
+- Added Brightness and Opacity sliders for virtual desktop in the dash
+- Added fallback desktop capture method using uWindowCapture library, which uses BitBlt method that works on hybrid GPU systems (e.g. with integrated and dedicated GPU)
+-- Note that this capture method is significantly less efficient and framerate of Neos and/or the capture might be poor when in use
+- Added "Desktop Renders" to debug dialog, which tracks how many desktop clone textures were rendered in the last frame
+- Added templates for GitHub issues to provide more structure and make it clear what information is needed for the quickest resolution of reach type of issue
+Tweaks:
+- Brightness, Opacity and Follow Cursor settings for virtual desktop are now persistent
+- Set default brightness to 95%, to help compensate overblown whites in the VR headset (based on report by @Shifty | Quality Control Lead)
+- Rendering desktop texture is now skipped when all the components are disabled/inactive in hierarchy to conserve performance
+- Security improvements for virtual desktop (based on feedback from @Faolan (Rad))
+- Sanitized session ID from user profile data when the session is hidden or private (based on report by @Faolan (Rad))
+-- This prevents users from joining hidden session easily in some cases, but please note that hidden sessions not designed to secure access, they're only hidden from the listing in most places. If you need to prevent people from joining use Private/Invite only which verifies each join
+- Upgraded to Unity 2019.4.17f1 (from 2019.4.16f1)
+- Upgraded to Oculus SDK v19.1 (from v19.0) which includes OVRPlugin 1.55.1 (previously 1.55.0)
+-- This should fix Neos running through SteamVR when in use with Oculus Link (reported by @Enverex and others)
+
+- Merged Japanese locale fix by @Melnus

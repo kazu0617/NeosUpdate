@@ -1,0 +1,60 @@
+2021.1.21.1068
+Sorry for fewer builds lately! I'm still trying to find good ways to ramp up development speed, but there's also a lot of design work, particularly on the desktop mode, that doesn't yet translate into code. There were trouble with the cloud recently as well that took a good chunk of time to find the root cause, but good news is that it's now running smoother and is more robust, so the same thing won't happen again and we have some good new tools for diagnosing any future incidents! 
+
+There's a big change in the shader system in this build, I've finally transitioned it fully onto the asset variant system, rather than using its own system for distributing and loading. This simplifies lots of things on my end, it's done in part as preparation for a bunch of the shader additions requests, because it removes a lot of tedious manual work whenever publishing shader updates. It makes the system more efficient too (local caching of data) and eliminates a bunch of bugs! Some of them even related to general asset downloading/loading.
+
+There are a few other small additions, you can now easily share inventory folders via external link - just grab the inventory link in Neos, open context menu and click "Copy Link" then paste it anywhere you want! If anyone copies and pastes it into Neos, it'll pop up the inventory link item.
+
+I'll have more stuff for you soon, some of the stuff in this build is laying a bit of groundwork for it, so keep tuned!
+New Features:
+- Fully transitioned Shader assets to the general asset variant system, rather than using specialized version
+-- Shader assets are now loaded directly from regular assets (neosdb:// instead of special key-word URLs) with the cloud generating metadata and variants
+-- Shader metadata is now cached locally, rather than fetched every time, reducing load time and bandwidth usage
+-- Variants are downloaded with the same pathway as rest of assets and can use the CDN for faster downloads
+-- It is now easier to update shaders and add new features to them, as large parts of the manual update and upload process are now gone
+-- Note that some shaders might take a bit to load (usually within a minute) if you're the first person requesting particular variant for any freshly compiled shader
+- Added MaterialAssetMetadata (under Assets/Utility) which provides metadata about a material asset (current variant ID and whether it's waiting for apply)
+-- This information is now also show in the inspector by default
+- Added DefaultAudioDeviceIndex to AudioSettingSync, for controlling the default audio device
+- Added "Copy Link" context menu option to InventoryLinks, which will copy URL to the clipboard that can be shared outside of Neos (requested by @GearBell with suggestion from @chemicalcrux)
+- You can now import neosrec:// URL's that represent either objects or directories (inventory links) by simply pasting them into Neos
+Optimizations:
+- Android builds will no longer download original asset and try to compute metadata locally when it's not computed on the cloud, instead waiting for the cloud computation to finish
+-- This should significantly reduce CPU, memory and bandwidth usage on mobile
+- Asset load requests are now done from background threads to reduce potential hitches / framerate slowdown when loading static assets
+
+Tweaks:
+- Added protection against invalid cloud API usage pattern when fetching unread messages, causing severe database load and degradation of the cloud service performance
+- Added protection against session NAT punchthrough information rapidly flipping between two remote addresses for the NAT punchtrough service
+-- If you have issues people connecting to your or your headless, please check your network. The session needs to be accessible only from a single IP and port combination and you can't use the same custom session ID for multiple sessions, otherwise you'll have connectivity problems
+- Added internal mechanism for repairing storage space usage for accounts that ended up over their quota and deleted items afterwards (if you're having trouble with usage getting stuck, you can request a team member to run this repair for you, ideally Shifty)
+- Added internal diagnostics for correlating API usage to database load to help diagnose cloud service problems
+- Added asset caching to the asset variant processing system, reducing bandwidth usage and time required to compute the asset metadata and multiple variants
+-- This is particularly useful for the shader variants, as there's lots of individual tiny variants, while the asset file is much bigger
+- Added timeout (15 seconds) for headset presence sensor changes to prevent rapid changing from away to online when the sensor is not working properly (based on report by @Coffee | Programmer)
+-- This is set to prefer the user being present in the headset. In case of rapid flipping, Neos will report that the user is constantly in the headset. This is done so also in cases of malfunction when the headset is on the head so some interactions don't get blocked
+- Audio device selection dialog is now more general
+-- Updated the labels to be more general instead specifically microphone
+-- It now exports the selected audio device through SelectedDeviceIndex property, rather than setting directly
+- AlphaClip property on XiexeToonMaterial now starts at 0.5 by default (based on suggestion by @chemicalcrux)
+- Removed obsolete DefaultAudioInputDeviceSelector
+
+- Merged Icelandic locale additions by @Nammi, with commit merge conflicts resolved by @かず (kazu / GitHub: kazu0617)
+- Merged Japanese, Esperanto and Chinese locale additions by @Melnus
+- Merged Korean locale additions and fixes by @LUA
+- Merged Spanish locale tweaks by @Ruzert
+- Merged Czech locale additions by @rampa_3 (UTC +1, DST UTC +2)
+- Merged Russian locale additions by @Shadow Panther [RU/EN, UTC+3]
+Bugfixes:
+- Fixed pathological cases of database queries costing several orders of magnitude more throughput than they should, resulting in severely degraded cloud service
+- Fixed cloud API responding with 500 (internal server error) instead of 429 (too many requests) in case of heavy load, resulting in client retry logic not being properly triggered and requests failing, rather than just taking longer
+- Fixed account bans not taking immediate effect if the user is still logged in
+- Fixed gather jobs with unsupported schemes getting stuck in the background, preventing other gahter jobs from starting in the queue
+- Fixed asset gathering sometimes using incomplete or empty files on failure as the gathered asset
+-- This fixes certain cases of assets being corrupt (e.g. video files being only partially loaded) or not loading at all (e.g. shaders, meshes and so on)
+- Added zero file size check when loading assets and their variants, forcing the system to re-gather the asset in case it's corrupted
+- Added guards to exceptions when loading shader variants, so they're properly logged and null shader is used and the material doesn't get stuck on the pink error material
+- Fixed being able to create invalid overloads of FireOnChange<T> node with invalid generic arguments, causing the node (and potentially other things) to break (based on report by @Psychpsyo)
+- Fixed internal record cache ending up with two duplicates of particular record when an item is saved through the inventory
+-- This fixes item remaining visible in the UI after being deleted (reported by @chemicalcrux, @H3BO3, @Toxic_Cookie, @Hayden, @Shifty | Quality Control Lead, @epicEaston197 and @ProbablePrime)
+- Fixed incorrect check of whether particular locomotion module can be used or not, resulting in UI (context menu) not graying out locomotion modes that the user is not allowed to use (reported by @GearBell)

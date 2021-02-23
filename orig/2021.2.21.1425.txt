@@ -1,0 +1,57 @@
+2021.2.21.1425
+Hello everyone, I finally got a new build for you all. I'm sorry that it took so long, it involved a lot of reworking of old Neos' interaction internals and transitioning them to a brand new Input Binding system and making sure everything still works as it should (big thanks for @Danger Tester's for helping to iron out all the major bugs before it went public!), plus I've been taking more breaks recently to better deal with stuff.
+
+Right now the system is mostly internal, meaning you can't customize your bindings quite yet, but that's coming at some point in the future (probably through config files first). It already offfers some benefits though, as some of incorrect input handlings were fixed in the rework and parts of system made more efficient. It's a big milestone towards the desktop support and other planned features (gamepad support, new controllers, customizing the bindings and so on) - you can already use locomotion and move around, which has been trivial to add after this rework. More desktop features should now start following up soon!
+
+There's a bunch of other smaller additions, tweaks and bugfixes as well, I plan on doing a batch of them after this build too to cleanup some of the queue since a lot of it got held up by the large rework, so builds should start coming out more frequently again. Thank you to everyone for your patience and understanding!
+
+New Features:
+- Implemented first phase of Neos' new Input Binding system and reworked Neos' internal input handling to use this new clean, generalized system
+-- This greatly simplifies Neos' input code, removing old tangled hardcoded controller checks and rules and replacing them with a generalized system of "Input Group" with "Input Actions"
+-- This makes it significantly easier to add support for new controllers, gamepads, keyboard & mouse controls and other input methods and reduce number of bugs
+-- Currently the input bindings cannot be customized (I want the system to stabilize a bit before we get to that), but will be in the future
+-- Common interactions (grabbing, clicking), tooltips, locomotion, avatar anchors were all reworked to use this new system
+-- Handling of movement exp and deadzone has been reworked, correcting previous incorrect implementation which would result in wrong behavior (e.g. deadzone cutting part of the range)
+--- You might need to readjust your in-game deadzone and movement exp settings, as those changes make some controls more responsive/sensitive
+-- Big thanks to Danger Testers who helped to bugtest this system before it went live: @Shifty | Quality Control Lead, @H3BO3, @Robyn (QueenHidi), @DeliriousJax, @Cyro, @Shadow Panther [RU/EN, UTC+3], @Epsilion, @Wolfie, @/home/JellyOsaurusPC and @Zyzyl
+
+- Added "Split Submeshes" advanced model import settings, which will import each submesh as individual object
+-- This can be used for compatibility with programs that export multiple objects on the same scene node (e.g. Anyland, as reported by @Alex from Alaska and @Dirk#3000)
+-- It's highly recommended to not use this setting unless necessary, as it will produce incorrect results for most models and/or produce suboptimal results
+- Added "Convert To Point Cloud" processing option to static meshes, which will convert all submeshes into point clouds (based on feedback by @H3BO3)
+
+- You can now use PhysicalLocomotion in the proper desktop mode (currently bound to WASDQE + Space bar, subject to change)
+-- Note that the proper desktop mode is still in heavy development and not recommended for general use yet
+Tweaks:
+- PriorityIssue summary now uses HTML URL to the issue, rather than the API one
+- TipJar now receives IButton events (suggested by @かず (kazu / GitHub: kazu0617)#0617, @rhenium_75#1015 and @AshtonSparx)
+- Reworked PrimaryLocomotionController setting into a more general "Primary Hand" (old setting should auto-convert)
+- Improved moderation tools to automatically notify any banned users on which ban is applied to their account, for how long and for what reason (based on feedback by @Veer | Chief Moderation Officer and the rest of the moderation team)
+- When your current Patreon priority issue is closed, you will get notified in Neos (suggested by @Shifty | Quality Control Lead)
+- Tweaked the mentor username badge colors (based on suggested values by @Turk)
+- Anchors now fire events from the user who actually got anchored
+- Improved sanitization of user Patreon information in the public API (based on issue by @AshtonSparx)
+- Updated voice icons to use a microphone graphic, instead of speaker to be more clear (icons created by @Coffee | Programmer, based on feedback by @Yellow#0930 and others)
+- Normalized volume of the new audio message notifications (based on report of them being too quiet by @Turk)
+
+- Removed old ToolBase and ToolSlot components, removing unecessary complexity of double tool system (CommonTool being equipped into Tool system and Tooltips being equipped to CommonTool)
+-- CommonTool is now the top level component that's directly put on the user, rather than being dynamically equipped
+
+- Merged Korean locale addition and fixes by @MirPASEC
+- Merged Japanese locale additions by @Aesc
+- Merged Esperanto and Chinese locale additions by @Melnus
+- Merged Czech locale additions and tweaks by @rampa_3 (UTC +1, DST UTC +2)
+- Merged French locale additions by @brodokk
+- Merged Russian locale tweak by @Shadow Panther [RU/EN, UTC+3]
+Optimizations:
+- Fixed CommonTool registering user interface edit mode events when destroyed, resulting in potentially significant CPU and memory usage bloat over time, as users are (re)spawned and worlds opened/closed
+- CommonTool undo and laser events are now only registered for the user actually owning the tool
+- Parts of CommonTool are not instantiated and/or initialized for users other than its owner, reducing some resource usage
+
+Bugfixes:
+- Fixed flat object positioning (used by GrabbableReceiverSurface among other things) still using Trigger colliders for part of the positioning mechanism (reported by @Toxic_Cookie)
+- Fixed Neos sessions crashing when trying to encode enum values that are negative (based on testing by @Cyro and @Komdog)
+- Fixed held tooltips receiving trigger press event on trigger release
+- Fixed HyperlinkOpenDialog working outside of Userspace (reported by @marsmaantje)
+- RaycastOne now validates input values, preventing performing raycasts when fed invalid values (e.g. NaN origin, direction or distance) and resulting in huge amount of exceptions (found in a log from @Cyro)
+- Added exception guard to missing struct fields for old instances of MemberEditor to avoid polluting the log with errors (found in a log from @Zyzyl)

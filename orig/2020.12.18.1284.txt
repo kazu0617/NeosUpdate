@@ -1,0 +1,28 @@
+2020.12.18.1284
+Just a small build with some polish for the virtual desktop and few other things. Portrait mode displays now work, switching active display works when Follow Cursor is on and hopefully some crashes due to Steam overlay injecting itself should be gone now.
+
+New Features:
+- Added AssetOptimizationBlock component, which will block most automatic optimizations on any assets under its hierarchy
+- Added DisplayInfo component (under Input/Desktop) which provides basic information about a display with given index (Resolution, Offset, DPI, Orientation, RefreshRate (if known) and if the display is primary)
+-- Note that like other components, this only works in userspace at the moment
+- Added ChildrenSaveBlocker component (under Utility), which will prevent children of the Slot from being saved, regardless of their persistent status (based on request by @Furf)
+- Added Orientation property to RawImage and RawGraphic, which allows rotating the UV coordinates of the displayed image
+
+Tweaks:
+- Portrait (both clockwise and counter-clockwise) and Upside down displays are now properly supported by the virtual desktop on Dash
+- Any non-persistent parts of items are now excluded from generated thumbnail when saving the item
+- When Follow Cursor mode is enabled and another screen is switched through the in-game UI, the mouse cursor is positioned to this screen
+-- This fixes the active screen from being stuck even if it's switched ingame (issue discovered by @Tatsu Kimiero and @Shifty | Quality Control Lead)
+- Updated featured icon in the world list (updated by @Coffee | Programmer)
+
+- Merged Korean locale additions by @MirPASEC
+- Merged Esperanto, Japanese and Chinese locale additions by @Melnus
+- Merged Czech locale additions by @rampa_3 (UTC +1, DST UTC +2)
+Bugfixes:
+- Fixed screenshots not saving properly into Steam Screenshots library or documents if the screenshot is deleted too quickly (based on report by @Tatsu Kimiero)
+- Fixed avatar near clip set to 0 causing smooth POV camera to break (reported by @Shifty | Quality Control Lead)
+- Changed initialization order of desktop duplication API library, so it happens before SteamAPI is initialized, to potentially prevent Steam overlay from agressively injecting itself into the functions and causing crashes on some systems (based on report by @pek#5602, @Jiink, @Zanibar, @thotgamma)
+-- I'm not sure if this actually helps as this issue doesn't occur on any of my systems, please let me know if you're still experiencing this problem
+- When importing models, any asseet optimizations (including material deduplication) are blocked to avoid the automatic optimization from corrupting the import process (based on report by @Enverex, @Shifty | Quality Control Lead and @chemicalcrux)
+- Fixed display layout positioning displays incorrectly with vertical offsets (based on report by @Veer | Chief Moderation Officer)
+- Fixed Android builds failing to compile (reported by @Azora Husky)

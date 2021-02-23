@@ -1,0 +1,15 @@
+2021.2.4.348
+Small hotfix for the new parent streaming sometimes producing invalid offsets (e.g. some user anchors making the user too big/small or offseting them incorrectly). Sorry it took so long, it took a bit to trace it down and I ended up having to rework the math for it!
+
+Compatible with previous build, but if you or other users are on the old one, you still might get incorrect behavior until everyone updates.
+
+Tweaks:
+- Merged Japanese, Esperanto and Chinese locale additions by @Melnus
+- Merged French locale addition by @brodokk
+- Merged Korean locale additions by @MirPASEC
+- Merged Czech locale addition by @rampa_3 (UTC +1, DST UTC +2)
+
+Bugfixes:
+- Reworked transform offset math for TransformStreamDriver so it always produces correct offsets with the new space streaming system
+-- This fixes avatar anchors and other behaviors that translate/rotate/scale user after parenting them resulting in invalid offsets or scale (reported by @Furf, @chemicalcrux, tested by @Shifty | Quality Control Lead, @chemicalcrux and @Tatsu Kimiero)
+- Added guards against invalid/degenerate rotation and scale offsets to TransformStreamDriver to prevent potential misbehavior

@@ -1,0 +1,18 @@
+2020.12.20.103
+Just a small patch with a bugfix for some crashes occurding on some systems as well as few other fixes and tweaks. Compatible with last build, don't need to update right away if you're not affected.
+
+New features:
+- You can now pass -Invisible argument to Neos to force your online status to be invisible on login (requested by @3x1t_5tyl3)
+
+Tweaks:
+- Steam and Discord rich presence is now cleared when the Online status is set to Invisible (requested by @Psychpsyo, @Shifty | Quality Control Lead and others)
+
+- Merged Japanese locale updates by kazu0617
+- Merged Dutch locale additions by @AnotherFoxGuy
+
+Bugfixes:
+- Added extra diagnostics for establishing network connections to help diagnose problem reported by @Readun
+- Made modifications to uDesktopDuplication library to prevent Steam Overlay from aggressively injecting itself and causing crashes on some machines
+-- Please let me know if this helps on your machine if you were affected, I can't replicate this bug on any of my machines
+- Fixed being able to equip tooltips in some cases without having the permission to do so (reported by @seif1)
+- Fixed procedural meshes using segmented builder throwing exceptions and failing to update in some cases with SmoothNormals mode on

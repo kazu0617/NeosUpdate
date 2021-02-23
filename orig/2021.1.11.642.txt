@@ -1,0 +1,58 @@
+2021.1.11.642
+Hello everyone! Sorry for the lack of builds lately, I've been taking things a bit slow recently (and working on the yearly update), but I've now started on a bunch of things again and picking up the pace again. This build has a bunch of small additions, tweaks and fixes.
+
+One major addition is ability to auto-save any screenshots to your inventory! If you're pack-rat like me, you can define an auto-save path and have every single screenshot (including ones others took that you save through the context menu)!
+
+I've made some changes to help improve overall voice quality and also in cases when there's packet loss as well. There's more that can be done with that, but I'll see what difference do the current changes make too.
+
+Anyway, I hope those changes and fixes help, I'll have more stuff coming soon!
+
+New Features:
+- Added CloudUserInfo (under Cloud/Indicators) which will fetch cloud user information for given UserID (based on request by @Ryuvi | Technical Artist)
+-- Currently provides Username, Registration Date and IconURL (can be fed directly to StaticTexture2D)
+- Added IgnoreReverbZones property to AudioOutput, which will prevent any reverb zones from affecting the particular audio output (based on request by @GearBell)
+- Added Auto-save screenshot path to Settings, which allows any taken or saved (through the context menu) screenshots to be automatically uploaded to your inventory
+-- You only provide the directory path, name is taken from screenshot itself as usual. Several variables can be used in the name:
+-- Time Taken: %day%, %month%, %year%, %second%, %minute%, %hour%, %day_name%, %month_name%, %day_name_en%, %month_nameen%
+-- Session start time: same as above, but with session in front, e.g. %session_day%, %session_month% etc...
+-- %location_name% - name of the world/session where it was taken
+-- %neos_version% - version of Neos in which this photo was taken
+-- Both forward and backward slashes work
+-- E.g. VR Photos\%year%\%location_name%\%month_name% %day% would save screenshot under VR Photos\2021\Neos Hub\January 11
+- Added internal event mechanism when records are saved. This will now make Inventory automatically pick up any items saved by other methods (e.g. the screenshot auto-saving) and refresh the UI
+Tweaks:
+- Added handling for lost voice data packets, which will now fill in the missing audio data rather than skip it
+-- This should improve voice quality for users with significant packet loss ratio (based on reports by @Zephyr.С, @Zane, @Rue Shejn | Artist 3D, @Hayden and others)
+- Voice messages now ignore reverb zones (based on feedback by @GearBell, @Turk, @Lewis Snow | Lead Audio Engineer and @Earthmark)
+- Video players now ignore reverb zones (based on feedback by @GearBell)
+- OpusStream now uses maximum encoding complexity on PC (previously complexity 2 out of 10) to provide best audio quality. Mobile platforms still use 2 to conserve CPU usage
+- Inventory/Message item spawn undo message is now localized
+- AssetMetadata (photo, audio) now stores the host of the session where the asset is taken, access level of the session and whether the session is currently hidden from listing
+-- This information is also indexed in the cloud when the asset is saved and will be searchable/filterable in the future
+- Added NonHeadlessUserCount property to OnlineUserUserCount components
+- The online user count facet now shows the total number of non-headless registered users instead of the total number of registered users and has the two numbers now swapped (the approximate number of all users is in parentheses now)
+- Switched back to latest youtube-dl (2021.01.08) from youtube-dlc (2020.11.11-3)
+- Merged Dutch locale additions by @AnotherFoxGuy
+- Merged Japanese locale tweaks and fixes by kazu0617 and @Aesc
+- Merged major Czech locale proofreading revision by @rampa_3 (UTC +1, DST UTC +2)
+- Merged English locale fixes by @rampa_3 (UTC +1, DST UTC +2)
+- Merged Korean locale fixes by @MirPASEC
+- Merged Spanish locale additions and twaeks by @Ruzert
+
+Optimizations:
+- Added type caching for user root components lookups, speeding up frequent lookups of certain components (e.g. for interactions, dynamic bones and more)
+- Some small optimizations when fetching cloud user info
+Bugfixes:
+- Fixed exception in cloud API when running a record search with invalid user or group
+- Added exception logging for asynchronous stream decode tasks
+- Added extra logging information for failed gather jobs to help diagnose failed loads (based on reprots by @Sykes, @Enverex, @oXoMaStErSoXo and others)
+- Fixed asset n processing system getting stuck due to temporary internet disconnect and not resuming once the connection is restored
+- Fixed user root components potentially returning already destroyed components, resulting in various errors when those are attempted to be used
+-- This should fix null reference exceptions with certain avatars and dynamic bones, causing those to break (reported by @GearBell, @Cataena and @Shifty | Quality Control Lead)
+- NeowGlowCircle is now tolerant to having its drives unassigned, preventing exceptions when parts of the visual are missing
+- Fixed exceptions when validating generic types when the type is null, causing certain behaviors to break (e.g. custom generic type selection) (reported by @Epsilion, @ProbablePrime and @Turk)
+- Fixed model import breaking on models which require transform computation on the root node (e.g. animating the scene root, as poreted by @chemicalcrux)
+- Fixed LinearMapper still clamping values even when Clamp is unchecked (reported by @Alex from Alaska)
+- Fixed Undo action for spawning Inventory/Message item that contains multiple items undoing only a single item (reported by @Coffee | Programmer)
+- Added exception guard to the online user stats fetching loop to prevent it from breaking (based on report by @Raith (CytraX))
+- Fixed being able to trigger tooltip equip action when the user is child of the tooltip, causing odd behavior (reported by @MattyK and @Shifty | Quality Control Lead)

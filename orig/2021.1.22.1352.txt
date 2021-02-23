@@ -1,0 +1,37 @@
+2021.1.22.1352
+Sorry for the smaller build today, it took a fair amount of time, but here are a bunch of shader updates! Based on popular demand, XiexeToon now has matcap support! I've also added ColorMask support and secondary UV support since those were popularly requested features too. Let me know if you run into any issues with those.
+
+The filter materials now also have stencil support and can be used with masking in UIX! This should allow for a bunch of nice effects. There is also new PBS Stencil material too.
+
+There are also some minor bugfixes based on recent changes too, which should solve some problems with the shaders loading and potentially some other things getting stuck.
+
+New Features:
+- Integrated Matcap support from XiexeToon (requested by @Turk, @DAWKY, @WolfYears101, @RoxyBoxxy, @Elektrospy, @GearBell, @Snooper, @chemicalcrux, @Engi, @Robyn (QueenHidi), @Princess, @jeana, @orange and others)
+-- To use, simply assign "Matcap" texture
+-- MatcapTint has been integrated as well
+-- Note that it's recommended to switch texture to at least Trillinear, so you get blending between different smoothness levels
+- Added ColorMask support to XiexeToon (reuqested by same as above)
+- Integrated secondary UV support from XiexeToon (requested by @Elektrospy and others)
+-- You can switch to second set of UV's for Albedo, Normal, Metallic, Thickness, Occlusion and Emission Maps
+- Added PBS Stencil material (requested by @Sharkmare)
+
+- Filter materials now have stencil support and can be used with masked UI (requested by @Hayden)
+-- Following materials were extended: Blur, Depth, Gamma, Grayscale, HSV, ChannelMatrix, Invert, LUT, Pixelate, Posterize, Refract and Threshold
+
+- Added internal build process to automatically prepare newly compiled shaders for upload
+
+Tweaks:
+- Increased number of parallel record preprocessing jobs and upload finalization jobs, to reduce delays when finishing uploads
+- Rig component inspector actions are now localizable
+
+- Merged Korean locale updates by @MirPASEC
+- Merged Esperanto, Japanese and Chinese locale additions and tweaks by @Melnus 
+- Merged Czech locale additions by @rampa_3 (UTC +1, DST UTC +2) 
+
+Bugfixes:
+- Fixed invalid shader variant comparison, causing shader variants to not be scheduled or loaded properly when there's same variant for a different platform already computed (reported by @AshtonSparx and @Rue Shejn | Artist 3D)
+- Fixed exceptions in StaticAssetProviders when they have been disposed while still running a background update (found in report from @marsmaantje and @chemicalcrux)
+- Fixed Blur material ignoring Offset/Scale of the SpreadMagnitudeTexture (reported by @chemicalcrux)
+- Fixed Pixelate material ignoring Offset/Scale of the ResolutionMagnitudeTexture
+- Fixed exception when searching for generic base class with invalid input (found in log from @chemicalcrux)
+- Fixed "Cleanup bone colliders" on Rig removing whole Slots on Rigs where the bones aren't separate objects (reported by @Medra)

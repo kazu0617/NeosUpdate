@@ -1,0 +1,19 @@
+2021.1.27.369
+A hotfix for newly imported meshes not showing up to other users, as well as few other bugfixes and a tweak that I did in the meanwhile.
+
+Compatible with previous build, but if you have people in the session (or the host) on the previous one you'll still have issue with the freshly imported meshes not appearing.
+
+Tweaks:
+- Improved string beautify function to avoid splitting multi-digit names (e.g. Projection360 becoming "Projection36 0", as reported by @Rue Shejn | Artist 3D) and add space after single-digit split ("Static Texture 2DProvider" -> "Static Texture 2D Provider")
+- Added missing descriptive names to Mobile, Linux and Host badges (based on report by @Epsilion)
+
+- Merged Russian locale additions and fixes by @Shadow Panther [RU/EN, UTC+3]
+- Merged Korean locale additions by @MirPASEC
+- Merged Japanese locale additions by @かず (kazu / GitHub: kazu0617)
+- Merged Esperanto and Chinese locale additions by @Melnus
+
+Bugfixes:
+- Fixed P2P asset metadata negotation getting stuck for Mesh and Shader metadata, causing any newly imported meshes to not appear for other users (reported by @Epsilion, @Punapple, @Soylent and @Nexulan | Community Manager)
+- Fixed mesh metadata generation throwing exceptions for meshes that have no vertices or invalid indicies
+- Fixed exception in AvatarHapticSourceManager when the ActiveUser field is null (found in a log from @Nexulan | Community Manager)
+- Fixed DynamicBlendShapeDriver breaking when it's configured with blendshapes that don't exist on the target mesh (found in a log from @Nexulan | Community Manager)

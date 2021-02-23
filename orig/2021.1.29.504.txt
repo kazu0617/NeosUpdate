@@ -1,0 +1,47 @@
+2021.1.29.504
+Sorry for smaller build, I'm putting more focus on the desktop mode now, there's a skeleton of the first core systems for it now! Not really in any usable state yet, but if you want to toy with it a bit, you can press F8 while in VR (note it'll mess up your VR view when active at the moment) and you'll be able to... look around xD More to come!
+
+But in the meanwhile here's a bunch of tweaks and bugfixes so they're not waiting too long before being released, hopefully they'll help out! Thanks to a fix lbry.tv links now work for video playback! There's some more polish for the issues caused by the changes to the shader system too, hopefully that'll patch up some of the remaining problems. 
+
+Work in progress features:
+- Added ScreenController, which manages and update different screen mode components
+- Added HeadSimulator, which is responsible for simulating user's head in screen mode
+- Added HandSimulator, which is responsible for simulating user's hands in screen mode (or when no controller is available)
+- Added FirstPersonTargettingController, which implements a first person view controls and behaviors
+
+New Features:
+- Added Mute badge (badge designed by @Coffee | Programmer)
+-- You can request a team member to add it
+Tweaks:
+- Updated the mentor badge to a proper design :Mentor:  (badge designed by @Coffee | Programmer)
+- Added small delay before the next button on the Welcome Guide screen can be clicked, to prevent accidental double clicking and skipping a screen
+-- This might potentially fix welcome tutorial screens sometimes becoming blank (reported by @Earthmark, @Furf and @Shifty | Quality Control Lead)
+- Improved permission system security to avoid the host setting a role to higher level than they're allowed to (based on report by @Hodufan)
+- Welcome Screen & tutorial will now show on Linux as well
+- "Copy Link" context menu option won't appear if multiple InventoryLink items are held to avoid generating too many items and ambiguity (based on report by @3x1t_5tyl3)
+- Userspace user will now have the proper UserID and Username of the currently signed user (based on feedback by @ProbablePrime)
+- Added Mango
+-- It is advised to not wait too long before eating it, otherwise it'll get mushy
+- Upgraded to youtube-dl 2021.01.24.1 from 2021.01.08
+- Set default doppler level to 0 on the AudioStream dialog (suggested by @Robyn (QueenHidi))
+- Button, PhysicalButton and NeosButton no longer send press events to disabled button event listeners on the Slot
+-- This fixes VirtualMultiKey and others working when disabled (reported by @Psychpsyo)
+
+- Merged Spanish locale update from @Ruzert
+- Merged Czech locale additions from @rampa_3 (UTC +1, DST UTC +2)
+
+Bugfixes:
+- Old shader providers with deprecated neoshader:// URL will now be cleared on load
+- Shader references on materials are now non-persistent and never copied/collected, instead being freshly re-initialized every time
+-- Combined with the clearing above this should help fix increasing lag due to duplicated shader providers when they're saved together with the object (based on report by @あむ（Rabbuttz）, @3x1t_5tyl3, @Hayden and @chemicalcrux)
+-- As a side effect, this now also excludes the shader assets from being pinned on user's account in the cloud and being included in the sum size of all assets showed in the inventory (reported by @LeDrascol and others)
+- Fixed Mentor badge not showing up in the Session dialog (based on report by @Ryuvi | Technical Artist)
+- Fixed Color blind badge not showing up in the Session dialog
+- Fixed Refract shader not activating the right variant when using normal map, causing it to not take effect (reported by @Vigilabo, @Hayden and @Ultranique)
+- Fixed youtube-dl stream extraction not working for services where extracting format metadata is not possible, as they offer only a single stream URL
+-- This fixes lbry.tv videos not loading and potentially some other services as well (based on report by @H3BO3 and @Shifty | Quality Control Lead)
+- Fixed exceptions in record saved events when saving items to the root folder in the inventory
+- Fixed deleted lasers on user (e.g. by deleting their armature) breaking InteractiveCamera, Finger camera gesture and other behaviors that try to get roots of lasers of user(s) in the world (reported by @ItsDusty <PRISM>)
+- New points of ValueGradientDriver<T> are now initialized to a valid default value for all datatypes
+-- This fixes ValueGradientDriver<floatQ> misbehaving when the default value of any of the points is not changed (reported by @Zyzyl)
+- Added detailed logging for Welcome Guide screen to help diagnose cases of the screen becoming randomly blank for some users (reported by @Earthmark and @Shifty | Quality Control Lead)

@@ -1,0 +1,49 @@
+2021.1.26.1308
+Some mesh related improvements! The mesh assets now use the asset variant system to generate, download and cache metadata, rather than computing them every time the mesh load. This should provide a bump in performance when loading worlds/avatars/items. It might take a few hours to get the full effect, as the metadata gets generated on the first load of each unique mesh.
+
+The Assimp library for 3D model import has been also updated to latest version from the source after more than half a year, with tons of bugfixes and additions, including much improved GLTF 2.0 support - rigs and blendshapes should now import correctly with names. There was a regression for some FBX files with animations, but I managed to fix that one in the library, but let me know if you run into a problem with some models that worked before.
+
+Also a bunch of other tweaks and bugfixes as usual. Not too many in this build, I plan on working on some more desktop stuff and wanted to push this out so it doesn't have to wait for that.
+
+Optimizations:
+- Moved mesh metadata computation to the asset variant system, improving performance and lowering CPU/memory usage when loading meshes
+-- Bounding Boxes, Bone Metadata and approximate bone bounds are now loaded from cache/cloud, instead of being computed on every single load of the mesh
+-- Other metadata is generated as well, which will allow future additions of mesh variants
+- Drive system will no longer unnecessarily request links when the target is set to null to avoid wasting CPU and memory resources
+New Features:
+- Updated to the latest version of Assimp model importer library from the source (previously requested by @Karel | CEO and others)
+-- This includes over a 1000 commits since our last update, with more than half a year of updates and should provide overall improvement for different 3D model support
+-- This includes significant improvements to GLTF 2.0 support, for example fixing lack of Blendshape import support and some blendshapes importing without names (reported and sample models provided by @Aegis_Wolf | Art Director, @MattyK and @3x1t_5tyl3)
+-- This build includes a custom bugfix for FBX animation regression introduced in the new version of Assimp, to prevent some FBX animated models from being mangled
+-- Note that the animation speed for FBX is assumed to be 1000 ticks per second, as it seems to be decoded wrong for some models. If you encounter some models playing animation too slow or too fast, let me know
+-- Recompiled the Linux version of Assimp64.so as well using Ubuntu (WSL), which can make model import work on Linux (based on previous feedback by @happysmash27, currently untested)
+
+- Added "Adjust Saturation" and "Adjust Value" processing to static textures (based on request by @Veer | Chief Moderation Officer)
+
+Tweaks:
+- Improved SimpleAvatarProtection security (based on report by @epicEaston197 and @jeana)
+- Added Pin button to the Audio Stream dialog (requested by @Tatsu Kimiero)
+- Saving current avatar is now blocked when the world prohibits any saving of items (based on feedback by @orange)
+- OnlineUsersCount now has UsersInPublic, which provides info on how many users are in public worlds (requested by @Alex from Alaska)
+- Added descriptive names to badge objects (requested by @Earthmark)
+- Merged Korean locale update by @MirPASEC
+- Merged Japanese locale additions by @Aesc
+- Merged Esperanto and Chinese locale additions by @Melnus
+- Merged Finnish locale additions and fixes by @Napo
+- Merged French locale update by @brodokk
+- Merged Russian locale additions by @Shadow Panther [RU/EN, UTC+3]
+- Merged Czech locale additions by @rampa_3 (UTC +1, DST UTC +2)
+- Merged Estonian locale additions and tweaks by @Meron
+- Merged English locale tweak by @rampa_3 (UTC +1, DST UTC +2)
+Bugfixes:
+- Fixed "Start Streaming" button not using the localized string (reported by @かず (kazu / GitHub: kazu0617))
+- Removed deprecated SimpleViveBasePositioner (based on feedback by @Psychpsyo)
+- Added explicit ordering to Undo steps, fixing the Undo system getting messed up in some cases when the user leaves and rejoins
+-- This fixes the Undo function randomly breaking (reported by @Enverex, @Robyn (QueenHidi) and @Hayden, cause discovered by @Shifty | Quality Control Lead)
+- Fixed potential incorrect serialization/deserialization of texture filtering type on texture variant descriptors
+- Fixed being able to transfer objects with SimpleAvatarProtection out of the world by grabbing them and switching to another world (reported by @Dante and others)
+- Fixed race conditions when requesting assets in the background, when the asset provider parameters change before the request is finished (found in a log from @DJNightmares)
+- BooleanValueDriver<T> now has FalseValue and TrueValue initialized with proper defaults for each datatype (particularly floats), to avoid having a degenerate value by default
+-- This fixes BooleanValueDriver<floatQ> corrupting rotations when one of the values has not been changed from the default (based on report by @Zyzyl)
+- OnActivated and OnDeactivated LogiX event impulses are now scheduled to fire after the event itself finishes propagating
+-- This fixes various data model corruptions by making changes to the scene in this event (e.g. adding new children, as reported by @chemicalcrux)

@@ -1,0 +1,38 @@
+2021.1.13.764
+Just a small build today, but some important changes. A new major addition is integration of the RNNoise noise supression library! This library uses recurrent neural networks trained on large set of data, but runs purely on CPU and is quite fast (will run even in mobile devices), while being very good at cleaning up unwanted noises (check #devlog to see some examples and more info).
+
+The library is on by default now for everyone, which should improve the general quality of voice for existing and new users, even with poor microphones or background noises and should come handy once there are more desktop users in the future, with varying microphones. You can turn it off in settings if you prefer not to use it (or use other solution).
+
+I'm also making some changes to the cloud, I've been investigating some sources of increased cost and found a few things that should provide major improvements. We're switching to a new CDN service (Microsoft from Akamai) and there were some optimizations. Let me know if you notice any weirdness with downloading assets or things not loading.
+
+There's a few other tweaks and bugfixes too. I've started poking around some internals of Neos that I haven't touched in a while, slowly preparing things for the desktop support, there's a small new bit in this build of it too, though not something you can use (yet)!
+New Features:
+- Integrated RNNoise noise supression library for eliminating audio noise using recurrent neural networks
+-- This is now default on for microphone input to reduce any background noise, breathing and ensure good quality voice audio for all users (can be turned off in settings)
+-- You can also use it to process any audio clips in Neos through the inspector using the new Denoise (RNNoise, optimized for voice at 48 kHz) option
+-- The library runs purely on CPU, no GPU/RTX support required
+--- Our fork of the library: https://github.com/Frooxius/rnnoise
+--- Source of our .NET wrapper for the library: https://github.com/Frooxius/RNNoise.NET
+
+- Added Stafing property to PhysicalLocomotion which allows controlling whether strafing with secondary is supported or not (requested by @Shifty | Quality Control Lead)
+-- This respects the "Allow Strafing" setting by default
+
+- Added OverlayLayer, similar to HiddenLayer, which separates objects into a layer that always renders on screen overlay
+-- Note that this is for internal use only for the screen support, I strongly advise against using this yourself
+
+Tweaks:
+- Moved to Microsoft Azure CDN from Akamai CDN
+-- This is mostly internal change, which provides more diagnostics and reduces some cloud service costs.
+- Added caching of asset metadata on the cloud API to heavily reduce database queries and improve response times
+- Added total/completed/failed gather job counters to the debug dialog
+- Neos account in Contacts will now always appear online as bot account
+- Lowered default noise gate threshold thanks the new noise supression feature (I recommend tweaking your own, you might put it lower than it was before now if you have RNNoise on)
+
+- Merged Japanese, Esperanto and Chinese locale updates by @Melnus
+- Merged Korean locale update by @LUA
+- Merged Japanese locale fixes and tweaks by @かず (kazu / GitHub: kazu0617)
+Bugfixes:
+- Fixed exceptions in HapticPointMapper on headless (found in a log from @Medra)
+- Added extra data model diagnostics to help diagnose some issues found in log from @Medra
+- Fixed exception causing the session to crash when running permision system cleanups
+-- This should fix random session disconnects reported by (@Hayden, logs provided by @Polaris (she/her))

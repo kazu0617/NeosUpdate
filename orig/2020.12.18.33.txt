@@ -1,0 +1,71 @@
+2020.12.18.33
+Hello! Sorry for the lack of builds recently, I haven't been feeling well lately so work was slow (plus I played some Cyberpunk), but here's a build with a new feature I wanted to add in a while - you can now use your desktop from within Neos dash! Interactions work, virtual keyboard works (including custom ones) and there's even mode where it auto-switches screen based on where your mouse cursor is (it's always annoyed me picking up a controller to switch screens in SteamVR dash). It's still rough around the edges a bit, but should be a good basis.
+
+Neos now also has native support for the OWO Game electro-haptic vest (https://owogame.com/) thanks to a devkit provided by the team, with some extensions to Neos' haptic volume system to better map to different sensations the suit provides.
+
+A bunch of other additions as well, new UIX layout component, and some smaller useful things and diagnostics for the voice streams. This build has a few important bugfixes as well that should fix some session crashes and other problems as well.
+New Features:
+- Added in-game desktop access, allowing your to view and interact with your desktop from within VR on the Neos dash
+-- You can view and switch between any of your screens and use your lasers and in-game keyboard to interact with them
+-- To switch to another screen or show the virtual keyboard, point at the screen and press the Menu button (one that normally opens context menu)
+-- Custom virtual keyboards (including Unicode input) are supported as well. Modifier and function keys (e.g. Win key, F1, F2, F3, F4...) will be passed correctly as well if you add them to your custom keyboard
+-- You can enable "Follow Cursor" mode, which will automatically switch active screen to the one where the mouse cursor currently is (this is to allow easy use when using physical keyboard and mouse with multi-monitor setup)
+-- This is initial support, more behaviors and tweaks will come (e.g. scrolling with touchpad/joystick, right clicking, better cursor behavior and so on)
+-- You cannot share your desktop to other users yet, that is a separate feature that will come at some later point in the future
+
+Desktop support is provided by several building block components, which can be used to create your custom setup as well. Note that most of these only work in Userspace for security reasons.
+- Added DesktopTextureProvider, which provides desktop texture of display with given index
+- Added DesktopInteractionRelay, which relays in VR inputs (laser clicks and virtual keyboard) to the system
+-- In order to relay the inputs, this component needs to have an active focus
+- Added DesktopDisplayLayout, which generates UI rects from a template based on your physical display layout
+- Added DesktopControlDialog which provides controls for switching active display and other options
+- Added DesktopController which combines above components into full interaction system
+- Added initial support for OWO Game haptic vest
+-- To enable the support, pass -Enable_OWO <IP> argument at startup with the IP of the server for interfacing with the suit
+-- When no sensation hints are present, the driver will map one of the sensations based on its type and intensity
+-- To use specific sensation type, use a sensation name prefixed with "OWO.", e.g. "OWO.MachineGunshots"
+- Added list of haptic sensation hints to HapticVolume
+-- This allows triggering specific predefined sensations with certain haptic devices. If the device doesn't understand any of the hints, they'll be simply ignored and generic mapping used
+-- Currently it hints are only used for the OWO haptic vest, bHaptics uses generic continuous mapping
+
+- Added FixedRectFitterLayout UIX layout component
+-- This component will take all the child RectTransforms with fixed size and position (using OffsetMin and OffsetMax) and fit them within the parent rect without changing their relative positions and sizes
+-- You can also selectively disable Shrinking and Growing of the fixed size
+-- Additionally you can determine how will the child rects fit into the parent one:
+--- FitLongerSide (will ensure that the child rects are fully contained)
+--- FitWidth
+--- FitHeight
+--- Stretch (will not preserve aspect ratio and make sure the children rects fully fill the rect on parent axes)
+- Added HorizontalStart and HorizontalEnd to SphereAligner, which allows adjusting the mapping range to a horizontal slice of the sphere (requested by @AlienInArea51 (MR-Alex))
+- Added "IsBatteryCharging" property to the controller nodes, which indicates of the controller is currently being charged
+-- Note that with Oculus runtime this is not supported at all, as they don't provide API to check the status. Currently it'll only work with SteamVR for controllers that report this state
+- Added HPReverbController node, for accessing the raw values of the HP Reverb G2 controller (based on request from @Rue Shejn | Artist 3D)
+- Added hideFromListing <true/false> command to headless to allow setting whether the world is hidden from listing or not (requested by @Raith (CytraX))
+- Added mechanism for touchables (including UI canvas) to intercept the context menu action and open a custom one
+-- Currently this is just internal and no way to use this directly
+- Added packet loss detection mechanism for voice streams to help diagnose choppy voice issues (based on report by @Shifty | Quality Control Lead, @Zephyr.С, @Zane and @Hayden (PolyLogiX Studio))
+-- This information is now accessible through AudioStreamMetadata, which now reports total number of packets, total lost number, last lost and loss ratio
+-- The inspector displays this information as well. The graph now has a new cyan line indicating packet loss
+Tweaks:
+- ModalOverlay now has CloseOnContextMenuAction, which will allow it to be closed using the context menu action
+- Locale postprocessor now generates missing keys file for each locale individually, rather than one large file for better organization ()
+
+- Merged Japanese, Esperanto and Chinese locale additions by @Melnus 
+- Merged Czech locale additions by @rampa_3 (UTC +1, DST UTC +2)
+- Merged Korean locale tweaks and additions, including Steam store translation by @MirPASEC
+- Merged Spanish locale tweaks and additions by @Ruzert
+- Merged German locale additions by @Bluigi 
+- Merged Polish locale additions by @art0007i 
+- Merged Russian locale tweaks and additions by @Shadow Panther [RU/EN, UTC+3]
+Bugfixes:
+- Fixed deleted world/item recovery process breaking and producing corrupted archive containing only some of the items (based on report by Kazu)
+- Fixed issue where database repair process would fail due to the corrupted database containing duplicate entries with the same unique key (based on report by @sirkitree)
+- Fixed invalid access to already disposed resources when marking changes on objects that were simultaneously deleted by another user, resulting in a world crash (encountered/reported by @Medra, @Cid and others)
+- Fixed invalid material property assignment in the Assimp.NET wrapper, resulting in any non-texture properties getting lost during model export process
+-- This fixes material color being lost on export (reported by @tutinoco#6130)
+- Fixed the tilt of italics glyphs being calculated incorrectly, making the glyphs tilt less the more they extend below baseline and resulting in inconsistently tilted glyphs (reported by @Alex from Alaska)
+- Fixed incorrect check if point is inside an IntRect when the rect has a horizontal offset
+- Fixed rendering camera to texture not reseponding the UseTranformScale property (reported by @Coffee | Programmer)
+- Fixed grabbing slot reference randomly breaking if the Slot has been just destroyed (reported by @chemicalcrux)
+- Added a guard against exceptions in touch grabbing system causing the player to be respawned (reported by @chemicalcrux)
+- Fixed interactive camera breaking, corrupting the data model and causing random crashes when locally deactivated (e.g. using a world culling system) (reported by @Earthmark, @Rukio, @Shifty | Quality Control Lead, @Tatsu Kimiero, @Snooper and @Princess)

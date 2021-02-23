@@ -1,0 +1,8 @@
+2021.1.29.612
+Another quick hotfix that should fix certain behaviors breaking that depend on internally duplicating components, breaking some UIX canvases as result. I'm sorry for the inconvenience!
+
+Compatible with previous build.
+
+Bugfixes:
+- Fixed duplication mechanism registering no-copy references for copying, causing duplicating and other processing that collects those references to break
+-- This fixes some operations and flows with UIX canvases causing the canvas to break (reported by @Raith (CytraX) and @3x1t_5tyl3)

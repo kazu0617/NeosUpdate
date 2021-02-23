@@ -1,0 +1,8 @@
+2021.1.29.572
+A quick hotfix for broken permissions UI, I'm sorry for the inconvenience! Should also fix the mentor badge still being old one, for some reason the build process pulled the old file instead of the new.
+
+Compatible with previous build.
+
+Bugfixes:
+- Fixed inverted condition causing permission buttons to gray out in most cases, making it impossible to change permissions (reported by @Kaittycat, @H3BO3 and @Zane)
+- Rebuilt standard Neos assets, which should fix the Mentor badge still linking to the old URL (reported by @Epsilion)

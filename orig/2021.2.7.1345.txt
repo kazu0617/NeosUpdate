@@ -1,0 +1,69 @@
+2021.2.7.1345
+Hello everyone! Sorry for relatively small build, I'm still focusing a lot into designing and underlying bits for the new desktop mode, but here's a bunch of accumulated additions, tweaks and bugfixes on the side, as well as new bits of the desktop mode (not quite in practically usable state yet though).
+
+One important thing added in this build is ability for Patrons to set a particular GitHub issue as priority one through a bot command, which will help us better tell what to prioritize. It's not the best UX, but it's quick to add in this form and we'll be able to build more UI and features into it in the future, so hopefully it'll serve well in the meanwhile!
+
+I've also been investigating some cases of record syncing taking long, particularly the upload finalizations and found the underlying issue, so uploads should now be faster, particularly when there's a lot of them happening at the same time from many users!
+
+There are also updated Mentor/Moderator badge designs by @Coffee | Programmer and first custom notification sounds by @Lewis Snow | Lead Audio Engineer! And lots of other tweaks and crucial bugfixes too.
+
+New Features:
+- Added /priorityIssue <issue number> Neos bot command, which lets Patreon supporters give a priority vote to GitHub issues to let us know what issues are most improtant to our supporters when deciding what to prioritize (suggested by @Karel | CEO, based on inquiries by @Epsilion, @Rukio and others)
+-- E.g. send /priorityIssue #149 to the "Neos" account in Neos to give your Patreon vote to GitHub issue with a specific number
+-- The command will echo back the title of the issue on success
+-- You can only have 1 priority issue at the time. You can change your vote at any time
+-- Current votes can be seen at https://www.neosvr-api.com/api/stats/priorityIssues, with vote count for each and vote points (points are proportional to level of support on Patreon, updated automatically)
+-- Note that the priority issue list is updated asynchronously and can take a few minutes to reflect your vote in some cases
+-- Later on we'll provide UI for this mechanism as more fine-grained options (e.g. giving specific amount points to multiple issues), but that requires more development time
+
+- Added TouchButton (under Transform/Interaction) which provides IButton implementation based on pure touch events (based on request by @Epsilion)
+-- This component acts as any touchable (e.g. can be touched from any angle unlike PhysicalButton, supports filtering Physical and Remote touches)
+-- It will trigger proper IButton events, either to components on the same slot or through LogiX event listener
+- Added "Master Volume" to settings, which allows controlling global volume of everything in Neos
+- Added "Disable LAN" setting, which disabled announcing the session on LAN as well as receiving announced session information from LAN
+- Added MasterVolume, NormalizationThreshold, DisableNormalization and NoiseSupression to AudioSettingSync
+- Added new custom Receive message & Receive invite sound effects (sound effects created by @Lewis Snow | Lead Audio Engineer)
+
+- Added new "Assemble" quiz type to Neos Classroom, which randomly scatters pieces of the model and requires the student to put it back together, measuring their time (requested by @Karel | CEO)
+
+Work in progress:
+- Implemented neck model for the desktop mode, which uses the neck as the pivot for head rotation, rather than the eyes, resulting in a more natural head movement
+-- For VR IK Avatars the neck offset is taken from the actual avatar, otherwise a hardcoded value is used
+- Added AvatarNeckOffset (under Users/Common Avatar System) which allows providing custom neck model offset for the desktop mode (e.g. you can set it to 0 to get the old behavior with pivot being around the eyes)
+-- Offset is in UserRoot coordinates and should match physical units (e.g. [0; -0.1; -0.12] is 10 cm down, 12 cm back from the eyes)
+- Added a mechanism for separate settings for Desktop Mode and VR
+- Audio settings (Master Volume, Noise Gate/Filtering, Normalization and audio input device) are now unique whether Desktop Mode or VR mode is active and will instantly switch as the modes are toggled
+- Added mechanism to position simulated hands based on hips position, rather than eyes, providing basis for more natural positioning (currently full positioning isn't implemented yet)
+- Added partial implementation of internal input binding system (not in any active use yet)
+
+Tweaks:
+- Updated designs of Moderator and Mentor badges to provide better contrast at small sizes and unify the style (badge designs created and updated by @Coffee | Programmer)
+- When the hinted user's root coordinate space is child of the user (e.g. a held item) it is now ignored
+-- This fixes other users not seeing the user moving when they're prop-surfing on a held item
+-- This should also fix user flying in random direction when trying to enter an anchor on user they are climbing (reported by @Robyn (QueenHidi))
+- Audio Device List now uses fixed size for device buttons and will scroll if there's more devices than fit on the screen (based on report by @Gourry, @Fleur24 and @Turk)
+- Flat positioning of objects (e.g. used by the GrabbableReceiverSurface) now ignores Trigger colliders when determining the placement boundaries (based on feedback by @Lewis Snow | Lead Audio Engineer and @Coffee | Programmer)
+- Settings screen panes will now scroll if there's too many settings to be displayed (based on report by @orange)
+- Upgraded SteamVR Unity Plugin to 2.7.2
+
+- Merged English & German locale corrections by @dfgHiatus
+- Merged Korean locale fixes by @MirPASEC
+- Merged French locale fixes by @brodokk 
+- Merged Russian locale addition by @Shadow Panther [RU/EN, UTC+3]
+
+Optimizations:
+- Added hierarchy exclusion caching to DroneCamera and removed object size measuring for exclusion, to avoid heavy performance loss in certain worlds (based on feedback from @Nexulan | Community Manager)
+- Added caching to internal default audio device index, to prevent it from being constantly searched on every access
+- Optimized long unecessary polling waits when finalizing asset uploads, resulting in blocking of the queue and uploads taking long to finish as a result with a large surge of requests
+- Increased number of active cloud upload workers, to reduce waits when there are many active uploads
+
+Bugfixes:
+- Fixed rigged model import breaking on hand rig detection when the thumb has only 2 actual bones (reported and sample models provided by @Shifty | Quality Control Lead, @gallusfox, @Ian Corvid#8921 )
+- Fixed Audio Stream muting when the host is recording a voice message (reported by @Tatsu Kimiero)
+-- Note that if you're streaming the same device as your normal voice input, it'll still get muted
+- Fixed driving of recordingVoiceMessage on User causing the user to not get muted when recording a voice message (reported by @DJNightmares, @xXx_swiggity_xXx#2124 and @Frank, PHD)
+- Fixed incorrect caching of nested external references when destroying objects while preserving assets, resulting in some assets to be inconsistently preserved when they shouldn't be
+-- This fixes undoing deletion of a photo resulting in it being blank (reported by @Tatsu Kimiero, @H3BO3, @Turk and @Shifty | Quality Control Lead)
+- Added invalid value (NaN/Infinity) filtering to InteractionLaser to prevent the laser from breaking due to NaN's/Infinities being fed into the system (based on report by @Ardes, @CyberZott#5567 and @EvawdnousCimota#2730)
+- Added invalid value filtering to BentTubeMesh to prevent it from getting corrupted (based on issue above)
+- Fixed AudioSettingSync providing incorrect values in NoiseGateAttack, Hold and Release properties

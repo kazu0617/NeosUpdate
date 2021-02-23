@@ -1,0 +1,45 @@
+2021.2.3.616
+Still focusing more on the desktop implementation, so the build is relatively small, but it has some crucial bugfixes and improvements. I've traced down source of lag when duplicating text renderers and UIX elements that use unique materials, which was particularly noticeable with some context menu injectors and such. The system will no longer degrade in performance with repeated duplications and deletions and parts of it are now faster too!
+
+There's also another change I wanted to do for a while, the stream of user's root position, rotation and scale now also streams which space are the values in, which fixes the random flickering of the user when they get parented/unparented. As a nice bonus, it now also makes the physical locomotion grabbing position the user properly relative to a moving gripped object/other user for other users, rather than having them lag behind it due to network!
+
+There's a bunch of other tweaks and additions, some more bits of the desktop mode internally, but most things don't affect anything visible yet.
+New Features:
+- Added ReferenceStream<T> which allows using unreliable streams for references
+- TransformStreamDriver now supports synchronizing the current transform space, ensuring that the transform values are properly interpreted when the object is reparented
+-- This is now used by default for user's root transform. This should fix random brief flickering of the users seen by others when they transition under a different parent or the user being in incorrect location for a short while when there are network delays for reliable data model changes (note that if the user is parented under a newly created slot, the system will still have to wait until that is synchronized first before they can be properly positioned) (pre-released tested and debugged with help by @Shifty | Quality Control Lead, @ohzee, @Zane and @Turk)
+- Added a mechanism to hint at user's root transform space, which allows using a different space to synchronize user's root transform
+-- This is now used for physical locomotion gripping, ensuring that when gripping onto a moving object/player, the user's relative position to the object is the same for other users, rather than lagging behind due to network latency
+- Added mechanism to initialize default value for Value streams
+-- This is used to fix some odd behaviors and better implement value streams used to synchronize value streams that need to start with non-default value (e.g. scale streams starting with [1;1;1] instead of [0;0;0]), regardless of who constructs the stream first (based discoveries from the testing session for feature above)
+Optimizations:
+- Heavily optimized CPU and memory usage when destroying objects with asset preservation by reducing redundant walking of the data model for each element and optimizing other operations
+-- This will significantly reduce hitches when destroying some complex objects (e.g. through the context menu)
+- Added more memory pooling to the saving process when processing dependencies, reducing memory allocations and GC churn
+- Fixed Value and Reference drivers not being cleaned up when a font material is removed
+-- This fixes progressively worse performance as UIX graphic and TextRenderer instances with unique materials are repeatedly added and destroyed (reported and replication steps provided by @3x1t_5tyl3, @chemicalcrux, @かず (kazu / GitHub: kazu0617), @あむ（Rabbuttz） and @Hayden)
+- Skipped unecessary Value/ReferenceCopy deduplication search for local TextRenderer and UIX materials (discovered thanks to the issue above)
+
+Work in progress:
+- Added a mechanism for controlling cursor lock/visibility state
+-- Switching to desktop mode while running in VR now locks and hides the cursor
+- Added mechanism for notifying screen moduels when user switches to screen mode, initializing certain values (e.g. first person module now updates the head root offset based on current VR headset position to avoid moving head back to playspace origin on XZ axes)
+Tweaks:
+- IsPresent user status is now true when the user is switched to the desktop mode
+- Destroy Selected on developer tooltip now has a confirmation (requested by @Robyn (QueenHidi))
+- Changed how TransformStreamDriver synchronizes scale offset, using multiplication instead of shift
+-- This fixes some oddities and bugs with transforming the scale offset, resulting in invalid scale in some scenarios (discovered thanks to testing by @Shifty | Quality Control Lead, @ohzee, @Zane and @Turk)
+- Upgraded to Unity 2019.4.19f1 (from 2019.4.18f1)
+
+- Merged Dutch locale additions by @AnotherFoxGuy
+- Merged German locale additions by @Elektrospy
+- Merged French locale additions by @brodokk 
+- Merged Japanese locale fix by @Aesc
+
+Bugfixes:
+- Improved hand rig detection, which will now check if finger bone candidates are actually weighted bones on the rig
+-- This fixes some models having their fingers bend incorrectly due to detecting proximal bones as metacarpals when there are two finger tips (reported and sample model provided by @Medra)
+- Fixed Patreon data stopping to update due to the list of patrons for PatreonSkyController becoming too large
+- Added exception guard to Collision event nodes, to prevent LogiX errors from breaking other collision events
+-- This should fix avatar anchors breaking due to laggy collisions when LogiX is involved (reported by @Earthmark and @kleinlowe#2600) and many similar scenarios
+- Fixed some cases where invalid rotation data get sent in a rotation stream, resulting in some transform operations producing invalid rotational offset

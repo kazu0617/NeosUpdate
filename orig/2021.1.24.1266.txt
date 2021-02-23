@@ -1,0 +1,75 @@
+2021.1.24.1266
+Hello, got a nice build for you, finally picking up some steam on things! :smile:
+
+You can now easily stream your desktop audio to the world, in high quality (customizable bitrate) and full stereo! This should be ideal for streaming music/podcasts into social worlds, soundboards and other effects! 
+
+I've also found a problem in the new shader variant system which made the shaders take a few second to load, since the metadata was being fetched from the cloud every time (and inefficiently at that, using a fallback method) and not cached locally, which should now make them load much faster once they're locally cached and reduce some uncessary network chatter.
+
+There are a bunch of bugfixes for some things that have been elusive for a bit. The random choppy voice issues should now be gone (unless they're caused by poor network), e.g. when using VoiceMeter or some audio devices, thanks to poking around with the audio stream system. Also the random freezes with particle systems are gone now!
+
+There's a bunch more stuff as well and more coming hopefully soon!
+New Features:
+- Added new "Stream Audio" tool, which allows you to easily stream your desktop audio (or another audio input device) to the world in high quality and stereo (based on request by @Scott Marshall on behalf of the WaveXR DJ community and previous discussions with @Tatsu Kimiero, @Zane and others)
+-- This can be accessed through the "Tools" facet on the main dash, same location as "Create New World", "Avatar Creator" and others
+-- You can select which audio device you want to stream and the desired bitrate (from 2.5 kbps to 500 kbps, the stream is using Opus codec). Both settings are persistent.
+-- The stream is in full stereo rather than mono used for the voice
+-- Once you start the stream a simple "Audio Stream" dialog will spawn in the world (quick simple UI for now, will be updated in the future)
+-- You can toggle the streamed audio between spatialized (coming from the dialog) and broadcast
+-- You can toggle whether the streamed audio plays for yourself or not
+-- You can also adjust the audio volume coming from the dialog
+-- To stop the stream, simply close/delete the dialog. Dialog is non-persistent and will destroy itself when the user leaves
+-- The dialog is a reference proxy to the audio stream data, allowing you to drop it as a source in the inspector
+-- The audio stream is completely independent from your microphone, allowing you to talk, use whiper or mute yourself as usual, without interrupting the audio. Switching to another world will interrupt though (this can be changed if necessary)
+-- The audio stream is relayed through the host same as voice. Make sure there's sufficient bandwidth for your chosen bitrate and number of users.
+-- It's heavily recommended to use another sound output (e.g. a virtual one) from your VR output, otherwise you'll stream in-game audio back into the game
+-- The data streamed this way is raw as it comes from the device. No normalization, noise gating or denoising is applied.
+- Added "AverageCodecSamplesPerSecond", "AverageReadSamplesPerSecond" and "AverageWriteSamplesPerSecond" to AudioStreamMetadata
+-- These indicate average number of encoded/decoded samples per second and number of locally read/written samples respectively
+-- This is measured at 10 second intervals
+-- This new info is also shown in the inspector
+- Streams are now internally destroyable
+- Added Neos Mentor badges and nameplate colors (mentors have green outline with white center)
+-- Currently the badge is not yet fully final and will likely change in the upcoming days
+- Added ++ and -- action nodes for float datatypes (based on feedback by @Psychpsyo)
+- Added "UseFilteredData" to LocalAudioDeviceStream to allow passing raw unfiltered data
+
+Tweaks:
+- Inventory permission notifications (not allowed to save, spawn or swap avatars) are now localizable
+- Removed audio-stream skip-ahead mechanism for high latency compensation in cases of high audio noise and constant transmission
+- Set default primary controller to Right instead of Left (suggested by @Shifty | Quality Control Lead)
+- Increased the max displayed message length to 512 from 128 (based on feedback by @Veer | Chief Moderation Officer)
+-- Note that this is just a quick hacky change and might still be kinda weird until the UI is reworked
+- Renamed ++ and -- operator nodes to +1 and -1 to avoid confusion with ++ and -- action nodes
+- Public banned users will now show in user search, allowing people to find them and add as a contact and added a separate type of ban which prevents the user from showing up in search (based on suggestion by @H3BO3 and others in the moderation team)
+-- This allows more fine-grained moderation control, only preventing user from being listed in search when really needed (e.g. offensive user-names)
+- Merged Korean locale additions and tweaks by @MirPASEC
+- Merged Japanese locale additions and fixes by @Aesc
+- Merged Esperanto and Chinese locale additions by @Melnus
+- Merged Czech locale additions by @rampa_3 (UTC +1, DST UTC +2)
+- Merged French locale additions by @brodokk
+- Merged Russian locale additions and tweaks by @Shadow Panther [RU/EN, UTC+3]
+
+Optimizations:
+- Optimized upload finalization on the cloud worker to avoid inefficient synchronous IO and reduced async overhead when extending computation for larger uploads
+- Added caching of completed upload tasks to the cloud worker, to speed up disposing of already finished uploads in the queue when there are duplicates
+-- This should fix some cases of uploads taking long time to finish when the processing queue gets flooded with many items
+- Type member editor now uses fully qualified type string when displaying the type, which allows the type string to be reused as input (based on feedback from @chemicalcrux)
+- Optimized multi-threading synchronization and handling for particle system collisions to potentially reduce random hitches and improve overall performance
+- Optimized memory usage for particle systems with collisions that have a very high amount of max particles, but don't have that many active
+- Fixed list particle system collision job data accumulating endlessly when there are particle systems with collisions, but no active particles, causing a significant hitch when the particles are spawned next time, with duration of the hitch proportional to how long ago they were last spawned (reported by @Lewis Snow | Lead Audio Engineer, @Rue Shejn | Artist 3D, @H3BO3, @Turk and others, with replication case found by @Shifty | Quality Control Lead)
+
+Bugfixes:
+- Fixed audio encoding skipping a chunk of samples when encoding audio frames when number of available samples isn't a multiple of the framesize and the operating buffer has been previously enlarged to handle more frames than are currently being encoded
+-- This should fix random cases of glitchy/choppy voice audio with certain users (previously reported by @Rue Shejn | Artist 3D, @Zephyr.С, @Shifty | Quality Control Lead, @Zane, @Hayden and others)
+- Fixed invalid frame size calculation for encoded audio streams with multi-channel (stereo and up)
+- Fixed SmoothValue<floatQ> misbehaving when first driving rotation due to invalid default quaternion (reported by @Zyzyl)
+- Fixed XNOR node with two inputs behaving as XOR (reported by @Rubik and @Ballistic)
+-- Existing instances of XNOR will be auto-converted to XOR to preserve their old behavior
+- Fixed red grab interaction laser not showing up when there's GrabBlock in the higher hierarchy, but the pointed grabbable is below this block (reported by @Earthmark)
+- Fixed cloud backend missing endpoint for fetching a batch of shader metadata, resulting in slower shader loading due to having fetch the metadata individually
+- Fixed Neos not caching any asset metadata locally when it has been fetched individually from the cloud, causing it to be fetched next time again
+-- Combined with above, this resulted in shader metadata not being cached locally at all, resulting in a noticeable delay when loading shaders and unecessary rise in API traffic (this is separate from generating fresh variants for the first time, this process will still take longer, but only ever happens once for each unique shader variant)
+- Fixed "JumpToUser" permission incorrectly causing the "Respawn" button to gray out for ther user (reported by @Zyzyl and @Rukio)
+- Fixed Component Attach dialog being usable by guests (reported by @Psychpsyo)
+- Removed accidentally saved log file from Neos standard assets (reported by @Epsilion)
+- Broke FireOnChange, FireWhileTrue and ImpulseInput nodes when they're already broken (Disabled) so they don't send impulses in this state (reported by @Psychpsyo)

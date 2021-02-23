@@ -1,0 +1,23 @@
+2021.1.3.612
+Sorry for small build! Pushing this now so the 2020 badge doesn't get delayed by other stuff. A few other fixes and tweaks as well.
+
+Compatible with previous build.
+
+New Features:
+- Added bonfire :Bonfire: badge for users registered in 2020 (badge created by @Coffee | Programmer)
+- When the user is away from the headset, EyeManager will now close their eyes
+
+Tweaks:
+- Merged Czech locale additions by @rampa_3 (UTC +1, DST UTC +2) 
+- Merged Japanese, Esperanto and Chinese locale additions by @Melnus
+- Merged Korean locale additions and tweaks by @MirPASEC
+- Merged French locale additions and fixes by @brodokk
+- Merged Japanese locale fixes by kazu0617
+
+Bugfixes:
+- Added component type validity checks at multiple levels, to prevent cases of attaching invalid genric types from causing a session crash (based on report by @badhaloninja)
+- Fixed UIX Mask getting stuck in visible state after ShowMaskGraphic is checked and then unchecked (reported by @ProbablePrime)
+- Fixed tool lasers not working when lasers are disabled (reported by @Electronus)
+- Fixed exceptions from cast nodes when casting values to types that won't fit the incoming value
+-- When casting value from a wider type, make sure you know that the value will fit in the target value, otherwise you'll get invalid value
+-- When casting decimal values to integers, the integer value will be clamped
