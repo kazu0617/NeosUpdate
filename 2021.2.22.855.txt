@@ -1,0 +1,36 @@
+**2021.2.22.855**
+新しい入力バインディングシステムのための微調整と修正の最初のラウンドと、キューの中で待っていた他のいくつかのものを実装・修正しました! キーボード入力（物理的または仮想的かどうかに関わらず）が入力中にブロックされ、あなたが移動するのを防ぐメカニズムを含みます（それが引き起こした不便さのために申し訳ありません、不幸にもDanger Test中には検出されませんでした^^;）。
+
+他にも多くの動作が微調整されて改善され、いくつかの奇妙な現象（例えば、キーボードとVRコントローラを組み合わせることで超高速で移動できるようになる）、NoClipがスケールを尊重していないこと、斜め方向への移動がコントローラによっては速くなることなどを防ぐことができるようになりました。
+
+他にもたくさんのことが修正され、Lewis Snow氏による新しいクレジットの送受信通知音など、いくつかのマイナーな追加が行われました。今後も続々と追加されていく予定です。
+
+New Features:
+- `Static Texture`(静的テクスチャ)に「白/黒背景を追加(Add White Backgraund)」処理オプションを追加
+-- これはテクスチャのアルファチャンネルを白または黒のソリッドカラーに置き換えます。
+
+- 新しいクレジット（NCR/KFC）の送受信通知音を追加しました。 (created by Lewis Snow | Lead Audio Engineer)
+- 業務用の商用「Neos Pro」フルライセンスを持っているユーザー向けに、青色の「Neos Pro」バッジを追加しました。 (based on request by KG6LSE)
+-- 現在、このバッジをアカウントに割り当てるプロセスは完全に自動化されていません。このバッジの表示をご希望の方は、ご連絡ください。
+Tweaks:
+- ワールド要素にアクティブフォーカスがある場合、キーボード入力がブロックされるようになりました。
+-- これにより、仮想キーボードや物理キーボードでのタイピングによりがプレイヤーが動いていた問題が修正されました。 (reported by Lewis Snow | Lead Audio Engineer, Freyar, Raith (CytraX), Mentalish, Tok, ArcticGamez, Geenz | Graphics Programmer, OctopusMan388, Shadow Panther [RU/EN, UTC+3] and others)
+- アナログアクションは、生の和ではなく、個々のバインディングの最大の大きさにスケーリングされるようになりました。
+-- これにより、複数の入力手段（キーボード＋VRコントローラなど）を使用しても、過度に大きな値が出てしまうことを防ぐことができます。 (e.g. resulting in the user moving too fast, as reported by Shifty | Quality Control Lead)
+- VR運動方向の基準軸を単位マグニチュードで丸め込みをするようになりました。
+-- これは、いくつかのコントローラで純粋な水平/垂直方向と比較して、対角線の動きが速すぎるのを修正しています。 (reported by Epsilion)
+- SetSlotPersistentSelf input boolean is now named Persistent instead of Active (based on feedback by Zyzyl)
+- Added heuristic to detect broken user presence in the headset (headset/SteamVR reporting that user is not in the headset, while they are) to fix blocked interactions, closed eyes and auto-away status (based on reports by Rue Shejn | Artist 3D, Rukio, Princess and others)
+-- The presence status will be reset if there are at least 8 trigger presses detected within last 15 seconds, while headset or controllers are moving
+
+- Merged Korean locale additions by MirPASEC
+- Merged Japanese, Esperanto and Chinese locale additions by Melnus
+- Merged French locale additions by brodokk
+Bugfixes:
+- Fixed NoClip locomotion speed not respecing the user's scale (reported by DeliriousJax and Cyro)
+- Improved File Browser security (based on feedback by Psychpsyo)
+- Fixed WebSocketClient failing to connect to a secure (wss://) websocket when it uses newer versions of TLS (reported by techy, runtime, with root issue found by Epsilion)
+- Fixed TransformStreamDriver providing invalid user space in some scenarios
+- Fixed DuplicatorTip not working when holding objects with a laser (reported by Epsilion, Medra and Cataena)
+- Fixed interaction laser going through the context menu on the first frame when opening it, causing it to flicker to large distance and immediatelly close it in cases there's userspace element behind it (based on report by Shifty | Quality Control Lead)
+- Fixed DynamicBoneSPhereCollider still being active when the component is disabled (reported by 3x1t_5tyl3)
