@@ -1,0 +1,36 @@
+**2021.2.22.855**
+First round of tweaks and fixes for the new input binding system and some other stuff that's been waiting in the queue! Including a mechanism for the keyboard inputs (whether physical or virtual) to be blocked while typing, preventing you from moving (sorry for the inconvenience it has caused, unfortunatelly it wasn't caught during danger nightly testing ^^; ).
+
+A bunch of other behaviors were tweaked and improved, which should prevent some oddities (e.g. being able to move super fast by combining keyboard & VR controller), NoClip not respecting the scale, diagonal movement being faster on some controllers and so on.
+
+A bunch of other things got fixed up as well and a few minor additions, including new credits send/receive notification sounds by Lewis Snow | Lead Audio Engineer! More to come soon, pushing this out now so you don't have to wait on those!
+
+New Features:
+- Added "Add White/Black Background" processing option to static texture
+-- This will replace the alpha channel of the texture with either solid white or black color
+
+- Added new credits (NCR/KFC) send/receive notification sounds (created by Lewis Snow | Lead Audio Engineer)
+- Added blue "Neos Pro" badge for users who have the full commercial "Neos Pro" license for business use (based on request by KG6LSE)
+-- Currently the process of assigning this badge to account isn't fully automated, if you'd like this badge to be displayed, please contact us
+Tweaks:
+- Keyboard inputs are now blocked when a world element has active focus
+-- This fixes typing on virtual or physical keyboard causing player movement (reported by Lewis Snow | Lead Audio Engineer, Freyar, Raith (CytraX), Mentalish, Tok, ArcticGamez, Geenz | Graphics Programmer, OctopusMan388, Shadow Panther [RU/EN, UTC+3] and others)
+- Analog actions are now scaled to the maximum magnitude of each individual binding, rather than raw sum
+-- This prevents using multiple input methods (e.g. keyboard + VR controller) from producing exceedingly large values (e.g. resulting in the user moving too fast, as reported by Shifty | Quality Control Lead)
+- Base axes for VR locomotion direction are now clamped to unit magnitude
+-- This fixes diagonal movement being too fast compared to pure horizontal/vertical with some controllers (reported by Epsilion)
+- SetSlotPersistentSelf input boolean is now named Persistent instead of Active (based on feedback by Zyzyl)
+- Added heuristic to detect broken user presence in the headset (headset/SteamVR reporting that user is not in the headset, while they are) to fix blocked interactions, closed eyes and auto-away status (based on reports by Rue Shejn | Artist 3D, Rukio, Princess and others)
+-- The presence status will be reset if there are at least 8 trigger presses detected within last 15 seconds, while headset or controllers are moving
+
+- Merged Korean locale additions by MirPASEC
+- Merged Japanese, Esperanto and Chinese locale additions by Melnus
+- Merged French locale additions by brodokk
+Bugfixes:
+- Fixed NoClip locomotion speed not respecing the user's scale (reported by DeliriousJax and Cyro)
+- Improved File Browser security (based on feedback by Psychpsyo)
+- Fixed WebSocketClient failing to connect to a secure (wss://) websocket when it uses newer versions of TLS (reported by techy, runtime, with root issue found by Epsilion)
+- Fixed TransformStreamDriver providing invalid user space in some scenarios
+- Fixed DuplicatorTip not working when holding objects with a laser (reported by Epsilion, Medra and Cataena)
+- Fixed interaction laser going through the context menu on the first frame when opening it, causing it to flicker to large distance and immediatelly close it in cases there's userspace element behind it (based on report by Shifty | Quality Control Lead)
+- Fixed DynamicBoneSPhereCollider still being active when the component is disabled (reported by 3x1t_5tyl3)
