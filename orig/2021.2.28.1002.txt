@@ -1,0 +1,74 @@
+2021.2.28.1002
+Hello everyone and sorry for fewer builds again, I'm still putting what time and energy I have into the new desktop mode and it's a bit tough splitting my focus now. There are several important additions to it, it's now in a state when it should be mostly usable for basic socializing! No interactions yet, but that's next on the menu.
+
+When you switch to the new desktop mode (pressing F8 currently), you can now use your dash with your mouse! This lets you use the messaging system, inventory, world browser and settings! This means that you can now also adjust your microphone for the desktop mode and newly even the audio output device, meaning Neos will automatically switch your settings as you toggle between VR & Desktop!
+
+There's initial bits of other systems too, for example we have initial Gamepad support now! It's only usable for locomotion & avatar anchors now (left and right thumbsticks map to the Primary & Secondary motion inputs), you can use it even if you're in VR.
+
+I'm pushing whatever I have along with other things, because some upcoming things (swapping out the libVLC) I want to run through danger testers first and I don't want that to block some of the other additions, tweaks and bugfixes. There are some improvements to the Neos' face tracking framework, to make setup easier and support more expressions, new feature to make textures easily tileable and more.
+
+IMPORTANT: Note that this build also improves the security of local assets and database. This will run database upgrade process when you first start which might take up to a few minutes (depending on the size of your database). The upgrade/repair process has been made significantly faster though, so hopefully it shouldn't take too long!
+New Features:
+- Added ability to override audio output device
+-- Can be found in Settings on the dash
+-- The setting automatically switches between desktop / VR mode, allowing you to configure different audio output for when you're in VR and when in Desktop mode, switching between the two automatically (along with other audio settings)
+-- If you won't use desktop/VR dynamic switching, it's recommended to change the audio device in Windows, as this mode potentially adds a bit of extra latency
+-- Currently only supported on Windows
+
+- Added initial Gamepad support
+-- You can use it to move around in the new desktop mode or even while in VR
+-- More interactions to come (e.g. virtual cursor to allow interacting with UI/dash)
+
+- Greatly expanded list of supported expressions on AvatarExpressionDriver (under Users/Common Avatar System/Face)
+-- Following expressions were added: 
+--- Tongue motion: TongueLeft, TongueRight, TongueDown, TongueUp, TongueRoll
+--- Combined expressions: GrinLeft, GrinRight, Angry
+--- Cheeks: CheekSuckLeft, CheeckSuckRight, CheeckSuck
+--- Lip movement: LipRaiseUpperLeft, LipRaiseUpperRight, LipRaiseLowerLeft, LipRaiseLowerRight, LipRaiseUpper, LipRaiseLower, LipLeftUpper, LipMoveLeftUpper, LipMoveRightUpper, LipMoveLeftLower, LipMoveRightLower, LipTopOverturn, LipBottomOverturn, LipOverlayUpper, LipUnderlayUpper, LipOverlayLower, LipUnderlayLower, Pout
+--- Jaw movement: JawLeft, JawRight, JawForward, JawDown, JawOpen
+-- Grin expression was improved to require user to partially smile, rather than just bare their teeth
+-- This will drive the avatar expressions using any supported lip/face tracking technology
+- Added semi-automatic blendshape assignment to AvatarExpressionDriver (through inspector button)
+-- For assignment to work, it needs to be placed on/above the Slot with SkinnedMeshRenderer
+-- Any already driven blendshape are ignored
+-- If there are blendshapes for independent sides (e.g. SmileLeft & SmileRight), the unilateral expression (e.g. Smile) is ignored, even if present to avoid potential overdriving
+-- Note that you might need to manually add/remove/tweak the expressions after, as detection success heavily relies on the naming conventions of an avatar
+-- If you find any blendshapes or problems with heuristics, let us know (ideally with a sample model)
+
+- Added TongueRoll property to the AvatarRawMouthData
+- Added AudioOutputDeviceInfo
+-- This is analogous to AudioInputDeviceInfo, but for output devices
+
+- Added "Make Tileable" texture processing option, which allows easily making any texture into one that will tile seamlessly
+-- You can setup transition ratio (portion of the texture used for tiling)
+-- Two simple algorithms are currently implemented - Loop and Mirror. Both bost well with organic textures, rather than rigid patterns
+
+Work in progress:
+- Added initial implementation of PointerInteractionController, which handles pointer interactions in desktop mode (mouse cursor, touch screen)
+- Added screen-projected overlay rendering to Dash in the Desktop mode
+-- You can now use the dash UI when switched to the desktop mode
+Tweaks:
+- Tweaked the priority issue scoring mechanism to include lifetime support as another score point and represent the score as a normalized value, rather than a raw sum
+-- This helps anonymize the data a bit and make the numbers more readable
+-- The lifetime support also gives us another datapoint for prioritization, highlighting people who have supported Neos in the past significantly, but are currently on lower pledge
+-- votePoints has been replaced by activePledgeScore in the JSON (you'll need to update tools to display the data accordingly)
+- Renamed AudioDeviceInfo to AudioInputDeviceInfo
+- Improved world/asset data security (based on feedback by @ItsDusty <PRISM>)
+- Improved database upgrade/repair process speed significantly
+- Database upgrade/repair text now keeps changing every half second to help indicate that the process is on-going
+- Added "thm", "thmb", "ind", "mid", "rin", "pin", "pnk" to finger rig detection heuristics (based on feedback by @Groxxy the Eye-Puppeteer)
+- Added heuristic for merging multiple animation tracks into a single one when importing models where each individual part has its own unique animation track (based on report and sample models by @Aegis_Wolf | Art Director, @Dante and others)
+- Small optimizations in BitmapX bilinear sampling
+
+- Merged Korean locale additions by @MirPASEC
+- Merged French locale additions & tweak by @brodokk
+- Merged Russian locale additions & tweaks by @Shadow Panther [RU/EN, UTC+3]
+- Merged Japanese locale additions & tweaks by @かず (kazu / GitHub: kazu0617) and @Aesc
+- Merged Spanish locale additions by @Ruzert
+- Merged Esperanto and Chinese locale additions by @Melnus
+- Merged Czech locale additions and tweaks by @rampa_3 (UTC +1, DST UTC +2)
+Bugfixes:
+- Fixed input groups getting their actions stuck on the last evaluated values when disabled
+- Updated version number of the VoiceFacetPreset, forcing the icons to update to the newest ones (based on report by @ohzee, @Lyo, @Hayden, @Kulza and @Shadow Panther [RU/EN, UTC+3])
+- Added generic type validation to ValueTextFormatDriver<T> and to prevent instantiation with invalid types (based on feedback by @Cyro)
+- Fixed Neos crashing on startup when running through the native Oculus runtime (reported by @Shadow Panther [RU/EN, UTC+3])

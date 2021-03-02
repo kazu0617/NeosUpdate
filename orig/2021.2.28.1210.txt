@@ -1,0 +1,11 @@
+2021.2.28.1210
+Just a small patch for a few things so they don't have to wait on a bigger build! Compatible with last build, no need to update right away if you don't need the fixes.
+
+Tweaks:
+- Increased sensitivity of gamepad right thumbstick for camera look control
+
+Bugfixes:
+- Fixed screen locomotion axis inputs (e.g. gamepad left thumbstick) being normalized, resulting no lack of analog speed control
+- Fixed AvatarExpressionDriver heuristic incorrectly detecting lower lips raising as "Jaw Down"
+- Fixed gamepad inputs getting stuck when the gamepad is disconnected (reported by @Shifty | Quality Control Lead)
+- Fixed the dash in desktop mode flickering when the user isn't at unit scale (reported by @Lyo, @epicEaston197, @Robyn (QueenHidi), @Cyro and others)
