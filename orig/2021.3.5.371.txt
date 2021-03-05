@@ -1,0 +1,5 @@
+2021.3.5.371
+Another hotfix! Fixing issue with input binding for avatar anchors making some vehicles constantly move. Compatible with the last one. Sorry for the inconvenience!
+
+Bugfixes:
+- Fixed invalid input binding for avatar anchors, resulting in avatar anchor inputs outputting [1; 1] (reported by @Shifty | Quality Control Lead, @H3BO3 and @Hayden)

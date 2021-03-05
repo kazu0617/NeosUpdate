@@ -1,0 +1,46 @@
+2021.3.5.176
+Hello everyone, sorry for another smaller build after a while, I'm working on a few things in the background that didn't give any results yet (e.g. switching to the new libVLC, which is giving some more trouble, but so far solvable) and reorganizing things internally - some if it you probably noticed as we moved all Neos related repositories to Neos-Metaverse on GitHub and added a bunch more that weren't public or on GitHub yet.
+
+There's some extra progress on desktop mode in this, mostly smaller additions in this one as well as bugfixes for some issues that cropped up (e.g. the audio output desyncing over time). I'm working on the design and pieces of the interaction system, that's going to be coming soon after.
+
+I've also started cleaning up some more of the existing bugs and issues to improve the general quality of life, the dynamic bone scaling issue is now fixed, as are a bunch of cases of user randomly flying or breaking when gripping and switching locomotions.
+New Features:
+- Added ability to crouch in the desktop mode (using the C key or the left trigger on a gamepad)
+- Added ability to scroll UIX ScrollRect with the mouse scroll wheel
+-- This is based on a new general system for UIX canvases/elements receiving axis movement events
+- Added support for importing Lights when importing 3D models/scenes (requested by @Elektrospy)
+-- To enable, you need to go to Advanced Settings and check "Import Lights"
+-- Currently not heavily tested and might need some tweaking. Will output debug info to log
+-- The intensity of lights might be too strong or too weak after import, depending on the source and might require to use the LightSource Wizard to adjust after
+-- Neos will normalize the maximum light intensity to 1, to avoid extremely bright lights when large units are used (e.g. watts coming from Blender)
+- Added Keyboard & Mouse Avatar Anchor bindings
+-- Space to release/exit anchor
+-- WASD for primary axis and Arrow Keys for secondary axis
+-- Space for primary action, Right Control for secondary action
+- Added GrabbableHandling and ColliderHandling to BakeMeshes, which allows specifying how are those components handled (based on feedback by @ProbablePrime and @Enverex)
+-- IfExists (default) - component is added if it exists on the source or if it's needed (e.g. Grabbable will enforce a collider)
+-- AlwaysAdd - component will always be added
+-- NeverAdd - component will never be added
+Tweaks:
+- Moved majority of public (and private) Neos repositories from my personal GitHub account (Frooxius) to organization one (Neos-Metaverse)
+-- NeosPublic, NeosLocale and any dependencies can now be found at: https://github.com/Neos-Metaverse
+-- More open source forks and custom libraries/wrappers have been published (freetype, FreeImage, msdfgen, Msdfgen.NET, Compressonator.NET, crunch, Crunch.NET and QuantityX)
+-- This is also done for better internal collaboration with developers and as pre-requisite for setting up a cloud build pipeline for Neos
+
+- VR eye tracking is now ignored when switched to desktop mode, fixing user's eyes becoming derpy
+- Neos now strips RTF tags from a world name when sending it to the Steam Rich Presence (reported by @Shard Wolf#5513 and @Earthmark)
+- Updated MTC tutorial text to include information on how to activate the laser for remote gripping (based on general feedback, change provided by @Turk)
+
+- Merged Korean locale additions and tweaks by @MirPASEC 
+- Merged Russian locale additions by @Shadow Panther [RU/EN, UTC+3]
+- Merged Japanese, Esperanto and Chinese locale additions by @Melnus
+- Merged French locale additions by @brodokk
+Bugfixes:
+- Fixed mirrors and portals rendering the Overlay layer (reported by @epicEaston197 and @Khosumi)
+- Fixed Neos-overriden audio output devices slowly getting more and more delayed over time (reported by @Shifty | Quality Control Lead)
+- Fixed user rapidly flying away when gripping on an object in PhysicalLocomotion and switching to a different locomotion (reported by @Shifty | Quality Control Lead, @Aegis_Wolf | Art Director, @Hayden, @chemicalcrux, @Robyn (QueenHidi))
+- Fixed user's transform getting corrupted and not syncing anymore when they're gripping on an object that gets destroyed (reported by @Cyro, @June and @Shire)
+- Fixed user's transferred rotation getting doubled when gripping onto an object (rotating more than they should) (reported by @Zyzyl, @Rukio, @Princess and others)
+-- This could also potentially fix any extra position and scale offsets in some scenarios (e.g. with avatar anchors, as reported by @Hayden)
+- Fixed VR headset presence sensor setting user's status to Away even when desktop mode is currently active (reported by @Shifty | Quality Control Lead)
+- Fixed dynamic bones getting scaled incorrectly when the user's root space changes while at the same time changing their scale (reported by @Shifty | Quality Control Lead, @H3BO3, @Hayden, @chemicalcrux and others)

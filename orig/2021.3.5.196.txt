@@ -1,0 +1,5 @@
+2021.3.5.196
+Small hotfix, removing forgotten debugging text. Compatible with previous, but update recommended so you're not spamming random pieces of text in a world.
+
+Bugfixes:
+- Removed forgotten debugging text on dynamic bones (reported by @Zane)

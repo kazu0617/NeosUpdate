@@ -1,0 +1,7 @@
+2021.3.5.223
+Extra hotfix sorry! Looks like some of the GitHub repository wraggling messed up the Unity build a bit, which caused problems with Oculus runtime.
+
+Compatible with previous.
+
+Bugfixes:
+- Rebuilt the Unity project, fixing messed up Oculus Runtime integration, causing Neos to not run properly through the Oculus Runtime and broken interactions (reported by @Gourry, @Aegis and @epicEaston197 )
